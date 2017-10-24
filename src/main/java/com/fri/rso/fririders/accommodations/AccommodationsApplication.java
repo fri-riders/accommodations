@@ -1,12 +1,12 @@
-package com.fri.rso.fririders.realestate;
+package com.fri.rso.fririders.accommodations;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class RealEstateApplication {
+public class AccommodationsApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RealEstateApplication.class, args);
+		SpringApplication.run(AccommodationsApplication.class, args);
 	}
 }

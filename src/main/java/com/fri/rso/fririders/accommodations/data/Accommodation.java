@@ -1,6 +1,6 @@
-package com.fri.rso.fririders.realestate.data;
+package com.fri.rso.fririders.accommodations.data;
 
-public class RealEstate {
+public class Accommodation {
     private long id;
     private String name;
     private String location;
@@ -8,7 +8,7 @@ public class RealEstate {
     private Double value;
     private Double pricePerDay;
 
-    public RealEstate(long id, String name, String location, Double value, Double pricePerDay) {
+    public Accommodation(long id, String name, String location, Double value, Double pricePerDay) {
         this.id = id;
         this.name = name;
         this.location = location;
@@ -16,7 +16,7 @@ public class RealEstate {
         this.pricePerDay = pricePerDay;
     }
 
-    public RealEstate(long id, String name, String location, String description, Double value, Double pricePerDay) {
+    public Accommodation(long id, String name, String location, String description, Double value, Double pricePerDay) {
         this.id = id;
         this.name = name;
         this.location = location;
