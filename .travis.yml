@@ -16,9 +16,9 @@ cache:
 install:
 - mvn clean package -U
 
-scripts:
-- docker build -t janerz6/accommodations .
-
 after_success:
 - docker login -u="janerz6" -p="dockerRSO"
+- docker build -t janerz6/accommodations .
+- docker create janerz6/accommodations -name=accommodations_container
+- docker commit accommodations_container janerz6/accommodations
 - docker push janerz6/accommodations
