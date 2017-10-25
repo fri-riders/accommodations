@@ -8,12 +8,8 @@ jdk:
 cache:
   directories:
   - $HOME/.m2
-
 install:
 - mvn install -Dmaven.javadoc.skip=true -B -V
-script:
-- mvn clean package -U
-
 scripts:
 - docker build -t janerz6/accommodations .
 after_success:
