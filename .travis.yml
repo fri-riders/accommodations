@@ -1,0 +1,17 @@
+sudo: required
+services:
+- docker
+language: java
+dist: trusty
+jdk:
+- openjdk8
+cache:
+  directories:
+  - $HOME/.m2
+install:
+- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+scripts:
+- docker build -t janerz6/accommodations .
+after_success:
+- docker login -u="janerz6" -p="dockerRSO"
+- docker push janerz6/accommodations
