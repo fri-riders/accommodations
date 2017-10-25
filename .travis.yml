@@ -13,8 +13,10 @@ cache:
   directories:
   - $HOME/.m2
 
-scripts:
+install:
 - mvn clean package -U
+
+scripts:
 - docker build -t janerz6/accommodations .
 
 after_success:
