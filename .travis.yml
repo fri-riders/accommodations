@@ -9,8 +9,9 @@ cache:
   directories:
   - $HOME/.m2
 install:
-- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
 scripts:
+- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 - docker build -t janerz6/accommodations .
 after_success:
 - docker login -u="janerz6" -p="dockerRSO"
