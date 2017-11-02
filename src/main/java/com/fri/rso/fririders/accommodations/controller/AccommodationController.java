@@ -1,115 +1,90 @@
 package com.fri.rso.fririders.accommodations.controller;
 
 import com.fri.rso.fririders.accommodations.data.Accommodation;
+import com.fri.rso.fririders.accommodations.repository.AccommodationRepository;
+import com.google.common.collect.Lists;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/accommodations")
 public class AccommodationController {
 
+    private final AccommodationRepository repository;
 
     private final RestTemplate restTemplate;
 
-    public AccommodationController(RestTemplateBuilder restTemplateBuilder) {
+    @Autowired
+    public AccommodationController(RestTemplateBuilder restTemplateBuilder, AccommodationRepository repository) {
         this.restTemplate = restTemplateBuilder.build();
+        this.repository = repository;
     }
 
     private static final String basePath = "https://jsonplaceholder.typicode.com";
-    private static List<Accommodation> accommodations = new ArrayList<>();
     private Logger log = LogManager.getLogger(AccommodationController.class.getName());
 
-    static {
-        accommodations.add(new Accommodation(1, "Hotel Slon", "Ljubljana", 20000000.0, 120.0));
-        accommodations.add(new Accommodation(2, "Motel Medno", "Medno", 1000000.0, 40.0));
-        accommodations.add(new Accommodation(3, "Hotel Kanu", "Dragočajna", 2000000.0, 50.0));
-        accommodations.add(new Accommodation(4, "Hotel K", "Dragočajna", 2000000.0, 50.0));
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public List<Accommodation> getByLocation(@PathVariable(value = "id") Long id) {
+        return repository.findById(id);
     }
 
-    @GetMapping
-    public Accommodation getByLocation(@RequestParam(value = "location") String location) {
-        return accommodations.stream()
-                .filter(accommodation -> accommodation.getLocation().equals(location))
-                .findFirst()
-                .map(accommodation -> {
-                    accommodation.setDescription(getPost(accommodation.getId()).getTitle());
-                    return accommodation;
-                })
-                .orElse(null);
+    @RequestMapping(value = "/location/{location}", method = RequestMethod.GET)
+    public List<Accommodation> getByLocation(@PathVariable(value = "location") String location) {
+        return repository.findByLocation(location);
+    }
+
+    @RequestMapping(value = "/capacity/{capacity}", method = RequestMethod.GET)
+    public List<Accommodation> getByCapacity(@PathVariable(value = "capacity") int capacity) {
+        return repository.findByCapacity(capacity);
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<Accommodation> getAll() {
-        return accommodations;
+        return Lists.newArrayList(repository.findAll());
+    }
+
+    @PostMapping
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void addAccommodation(@ModelAttribute Accommodation accommodation) {
+        repository.save(accommodation);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteAccommodation(@PathVariable("id") Long id) {
+        repository.delete(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Accommodation> updateAccommodation(@PathVariable("id") Long id, @ModelAttribute("accommodation") Accommodation acc_update) {
+        Accommodation accommodation = repository.findOne(id);
+        if (accommodation != null) {
+            accommodation.setName(acc_update.getName());
+            accommodation.setCapacity(acc_update.getCapacity());
+            accommodation.setDescription(acc_update.getDescription());
+            accommodation.setLocation(acc_update.getLocation());
+            accommodation.setPricePerDay(acc_update.getPricePerDay());
+
+            repository.save(accommodation);
+            return ResponseEntity.ok().body(accommodation);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
     // Simple fake api call for demo purpuses
-    public Post getPost(long id) {
-        return this.restTemplate.getForObject(basePath + "/posts/" + id, Post.class);
-    }
-
-    private static class Post {
-        private int userId;
-        private int id;
-        private String title;
-        private String body;
-
-        public Post() {
-        }
-
-        public Post(int userId, int id, String title, String body) {
-            this.userId = userId;
-            this.id = id;
-            this.title = title;
-            this.body = body;
-        }
-
-        public int getUserId() {
-            return userId;
-        }
-
-        public void setUserId(int userId) {
-            this.userId = userId;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getBody() {
-            return body;
-        }
-
-        public void setBody(String body) {
-            this.body = body;
-        }
-
-        @Override
-        public String toString() {
-            return "Post{" +
-                    "userId=" + userId +
-                    ", id=" + id +
-                    ", title='" + title + '\'' +
-                    ", body='" + body + '\'' +
-                    '}';
-        }
+    public Accommodation getAccommodations(long id) {
+        return this.restTemplate.getForObject(basePath + "/posts/" + id, Accommodation.class);
     }
 }
