@@ -18,9 +18,5 @@ install:
 
 after_success:
 - docker login -u="janerz6" -p="dockerRSO"
-- export REPO=janerz6/accommodations
 - docker build -t janerz6/accommodations .
-- docker create $REPO -name=accommodations_container
-- docker commit accommodations_container $REPO
 - docker push $REPO
-- docker run $REPO -p 8085:8085
