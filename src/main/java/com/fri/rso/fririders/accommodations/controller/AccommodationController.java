@@ -1,17 +1,22 @@
 package com.fri.rso.fririders.accommodations.controller;
 
 import com.fri.rso.fririders.accommodations.data.Accommodation;
+import com.fri.rso.fririders.accommodations.data.Booking;
 import com.fri.rso.fririders.accommodations.repository.AccommodationRepository;
 import com.google.common.collect.Lists;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -29,11 +34,36 @@ public class AccommodationController {
     }
 
     private static final String basePath = "https://jsonplaceholder.typicode.com";
+    private static final String bookingsBasePath = "http://localhost:8080/v1/bookings";
     private Logger log = LogManager.getLogger(AccommodationController.class.getName());
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public List<Accommodation> getByLocation(@PathVariable(value = "id") Long id) {
         return repository.findById(id);
+    }
+
+    @RequestMapping(value = "/{id}/availability", method = RequestMethod.GET)
+    public ResponseEntity getAvailability(@PathVariable(value = "id") int id, @RequestParam long fromTime, @RequestParam long toTime) {
+        final Date startDate = new Date(fromTime);
+        final Date endDate = new Date(toTime);
+        if (startDate.compareTo(endDate) >= 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            final List<Booking> bookings = restTemplate.exchange(bookingsBasePath,
+                    HttpMethod.GET, null, new ParameterizedTypeReference<List<Booking>>() {
+                    }).getBody();
+            final boolean isAvailableInterval = bookings.stream()
+                    .filter(booking -> booking.getIdAccommodation() == id)
+                    .noneMatch(booking ->
+                            booking.getFromDate().compareTo(startDate) <= 0 &&
+                                    booking.getToDate().compareTo(startDate) >= 0
+                    );
+            return ResponseEntity.ok(isAvailableInterval);
+        } catch (RestClientException e) {
+            return ResponseEntity.badRequest().body("Bookings service unavailable!");
+        }
+
     }
 
     @RequestMapping(value = "/location/{location}", method = RequestMethod.GET)
