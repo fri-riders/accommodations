@@ -17,6 +17,7 @@ install:
 - mvn clean package -U
 
 after_success:
-- docker login -u="janerz6" -p="dockerRSO"
-- docker build -t janerz6/accommodations .
+- docker login -u="janerz6" -p=$DOCKER_PASSWORD
+- export REPO=janerz6/accommodations
+- docker build -t $REPO .
 - docker push $REPO
