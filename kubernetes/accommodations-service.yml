@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: users
+  name: accommodations
   labels:
-    app: users
+    app: accommodations
 spec:
   type: LoadBalancer
   ports:

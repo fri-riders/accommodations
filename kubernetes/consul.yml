@@ -1,0 +1,78 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: consul
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: consul
+    spec:
+      containers:
+        - name: consul
+          env:
+            - name: ENVIRONMENT
+              value: "dev"
+            - name: MASTER_TOKEN
+              value: "INITIAL_MASTER_TOKEN_FOR_ACCESS"
+            - name: GOSSIP_KEY
+              value: "ENCRYPTION_KEY_FOR_GOSSIP"
+            - name: CONSUL_DEBUG
+              value: "true"
+            - name: CONSUL_SERVER_COUNT
+              value: "1"
+          image: consul:1.0.0
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8500
+            name: ui-port
+            protocol: TCP
+          - containerPort: 8400
+            name: alt-port
+            protocol: TCP
+          - containerPort: 53
+            name: udp-port
+            protocol: UDP
+          - containerPort: 8543
+            name: https-port
+            protocol: TCP
+          - containerPort: 8500
+            name: http-port
+            protocol: TCP
+          - containerPort: 8301
+            name: serflan
+            protocol: TCP
+          - containerPort: 8302
+            name: serfwan
+            protocol: TCP
+          - containerPort: 8600
+            name: consuldns
+            protocol: TCP
+          - containerPort: 8300
+            name: server
+            protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 8500
+  - name: rpc
+    port: 8400
+  - name: serflan
+    port: 8301
+  - name: serfwan
+    port: 8302
+  - name: server
+    port: 8300
+  - name: consuldns
+    port: 8600
+  selector:
+    app: consul
