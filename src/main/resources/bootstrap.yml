@@ -12,3 +12,16 @@ spring:
     active: ${SPR_PROFILE:dev}
 app:
   name: Accommodation server
+
+management:
+  security:
+    enabled: false
+  health:
+    solr:
+      enabled: false
+    consul:
+      enabled: false
+
+endpoints:
+  health:
+    sensitive: false
