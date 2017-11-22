@@ -1,0 +1,14 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: accommodations
+  cloud:
+    consul:
+      enabled: true
+      host: ${CONFIG_SERVER_URL:localhost}
+  profiles:
+    active: ${SPR_PROFILE:dev}
+app:
+  name: Accommodation server

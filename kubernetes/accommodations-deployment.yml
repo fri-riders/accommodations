@@ -10,20 +10,18 @@ spec:
         app: accommodations
     spec:
       containers:
-      - image: janerz6/accommodations
+      - image: fri-riders/accommodations
         name: accommodations
-#        env:
-#          - name: KUMULUZEE_DISCOVERY_CLUSTER
-#            value: bluemix
-#          - name: KUMULUZEE_DISCOVERY_CONSUL_HOSTS
-#            value: http://consul:8500
-#          - name: KUMULUZEE_CONFIG_CONSUL_HOSTS
-#            value: http://consul:8500
-#          - name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
-#            value: jdbc:postgresql://postgres-users:5432/users
-#          - name: KUMULUZEE_SERVER_BASEURL
-#            value: https://158.175.76.2:21977
+        env:
+          - name: KUMULUZEE_DISCOVERY_CLUSTER
+            value: bluemix
+          - name: KUMULUZEE_DISCOVERY_CONSUL_HOSTS
+            value: http://consul:8500
+          - name: KUMULUZEE_CONFIG_CONSUL_HOSTS
+            value: http://consul:8500
+          - name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
+            value: jdbc:postgresql://postgres-users:5432/users
         ports:
-        - containerPort: 8081
+        - containerPort: 8080
           name: server
           protocol: TCP

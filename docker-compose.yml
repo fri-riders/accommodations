@@ -1,0 +1,16 @@
+version: "3"
+services:
+  accommodations:
+    build: .
+    ports:
+      - 8081:8081
+    environment:
+      - CONFIG_SERVER_URL=consul
+    depends_on:
+      - consul
+  consul:
+    image: consul
+    ports:
+      - 8400:8400
+      - 8500:8500
+      - 8600:8600
