@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
+import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -27,10 +29,15 @@ public class AccommodationController {
 
     private final RestTemplate restTemplate;
 
+    private final CounterService counterService;
+    private final GaugeService gaugeService;
+
     @Autowired
-    public AccommodationController(RestTemplateBuilder restTemplateBuilder, AccommodationRepository repository) {
+    public AccommodationController(RestTemplateBuilder restTemplateBuilder, AccommodationRepository repository, CounterService counterService, GaugeService gaugeService) {
         this.restTemplate = restTemplateBuilder.build();
         this.repository = repository;
+        this.counterService = counterService;
+        this.gaugeService = gaugeService;
     }
 
     private static final String basePath = "https://jsonplaceholder.typicode.com";
@@ -63,8 +70,10 @@ public class AccommodationController {
                             booking.getFromDate().compareTo(startDate) <= 0 &&
                                     booking.getToDate().compareTo(startDate) >= 0
                     );
+            gaugeService.submit("services.accommodations.availability.error",0);
             return ResponseEntity.ok(isAvailableInterval);
         } catch (RestClientException e) {
+            gaugeService.submit("services.accommodations.availability.error",1);
             return ResponseEntity.badRequest().body("Bookings service unavailable!");
         }
 
@@ -82,6 +91,7 @@ public class AccommodationController {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<Accommodation> getAll() {
+        counterService.increment("meter.services.accommodations.getAll.invoked");
         return Lists.newArrayList(repository.findAll());
     }
 

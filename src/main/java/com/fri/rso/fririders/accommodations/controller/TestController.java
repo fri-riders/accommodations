@@ -3,6 +3,7 @@ package com.fri.rso.fririders.accommodations.controller;
 import com.fri.rso.fririders.accommodations.config.CustomProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.metrics.buffer.BufferMetricReader;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,7 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping(value = "/test")
 public class TestController {
 
-    @Autowired
-    private CustomProperties properties;
+    private final CustomProperties properties;
 
     private final RestTemplate restTemplate;
     private final ConfigurableEnvironment env;
@@ -25,9 +25,10 @@ public class TestController {
     String appName;
 
     @Autowired
-    public TestController(RestTemplate restTemplate, ConfigurableEnvironment env) {
+    public TestController(RestTemplate restTemplate, ConfigurableEnvironment env, CustomProperties properties, BufferMetricReader bufferMetricReader) {
         this.restTemplate = restTemplate;
         this.env = env;
+        this.properties = properties;
     }
 
     @GetMapping
@@ -43,6 +44,6 @@ public class TestController {
     @RequestMapping(value = "/restart", method = RequestMethod.POST)
     public ResponseEntity restartApp() {
         properties.setHealthy(!properties.getHealthy());
-        return ResponseEntity.ok().body("Make healthy="+ properties.getHealthy());
+        return ResponseEntity.ok().body("Make healthy=" + properties.getHealthy());
     }
 }
