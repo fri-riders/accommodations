@@ -50,6 +50,10 @@ public class AccommodationController {
             return ResponseEntity.badRequest().build();
         }
         try {
+
+//        final URI consul = discoveryClient.getInstances("bookings").stream()
+//                .findFirst().map(ServiceInstance::getUri)
+//                .orElse(null);
             final List<Booking> bookings = restTemplate.exchange(bookingsBasePath,
                     HttpMethod.GET, null, new ParameterizedTypeReference<List<Booking>>() {
                     }).getBody();

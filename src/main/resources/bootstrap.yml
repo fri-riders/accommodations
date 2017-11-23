@@ -9,8 +9,7 @@ spring:
       enabled: true
       host: ${CONFIG_SERVER_URL:localhost}
       discovery:
-        instanceId: ${spring.application.name}
-        hostname: ${spring.application.name}
+        hostname: ${DISCOVERY_HOSTNAME:localhost}
   profiles:
     active: ${SPR_PROFILE:dev}
 app:

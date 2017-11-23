@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class HealthCheck implements HealthIndicator {
 
     @Autowired
-    private Environment env;
+    private CustomProperties properties;
 
     @Override
     public Health health() {
@@ -23,6 +23,6 @@ public class HealthCheck implements HealthIndicator {
     }
 
     public int check() {
-        return env.getProperty("app.healthy", Boolean.class) ? 0 : 1;
+        return properties.getHealthy() ? 0 : 1;
     }
 }
