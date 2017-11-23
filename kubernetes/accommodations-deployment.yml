@@ -13,14 +13,8 @@ spec:
       - image: janerz6/accommodations
         name: accommodations
         env:
-          - name: KUMULUZEE_DISCOVERY_CLUSTER
-            value: bluemix
-          - name: KUMULUZEE_DISCOVERY_CONSUL_HOSTS
-            value: http://consul:8500
-          - name: KUMULUZEE_CONFIG_CONSUL_HOSTS
-            value: http://consul:8500
-          - name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
-            value: jdbc:postgresql://postgres-users:5432/users
+          - name: CONFIG_SERVER_URL
+            value: consul
         ports:
         - containerPort: 8081
           name: server
