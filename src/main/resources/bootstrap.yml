@@ -10,6 +10,7 @@ spring:
       host: ${CONFIG_SERVER_URL:localhost}
       discovery:
         instanceId: ${spring.application.name}
+        hostname: ${spring.application.name}
   profiles:
     active: ${SPR_PROFILE:dev}
 app:
