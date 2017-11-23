@@ -12,6 +12,7 @@ spring:
     active: ${SPR_PROFILE:dev}
 app:
   name: Accommodation server
+  healthy: true
 
 management:
   security:

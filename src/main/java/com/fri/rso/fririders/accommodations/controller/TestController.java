@@ -2,20 +2,27 @@ package com.fri.rso.fririders.accommodations.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/environment")
-public class EnvTestController {
-    @Autowired
-    private Environment env;
+@RequestMapping(value = "/test")
+public class TestController {
+
+    private final ConfigurableEnvironment env;
 
     @Value("${app.name}")
     String appName;
+
+    @Autowired
+    public TestController(ConfigurableEnvironment env) {
+        this.env = env;
+    }
 
     @GetMapping
     public String getEnv() {
@@ -25,5 +32,10 @@ public class EnvTestController {
     @RequestMapping(value = "/appName", method = RequestMethod.GET)
     public String getAppname() {
         return appName + " " + env.getProperty("app.name");
+    }
+
+    @RequestMapping(value = "/restart", method = RequestMethod.POST)
+    public ResponseEntity restartApp() {
+        return ResponseEntity.ok().body("Make ill to get RESTARTED");
     }
 }
