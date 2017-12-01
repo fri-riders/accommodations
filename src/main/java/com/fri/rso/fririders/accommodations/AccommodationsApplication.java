@@ -33,7 +33,6 @@ public class AccommodationsApplication {
             repository.save(new Accommodation(2L, "Motel Medno", "Medno", "", 5, 40.0));
             repository.save(new Accommodation(3L, "Hotel Kanu", "Dragočajna", "", 2, 50.0));
             repository.save(new Accommodation(4L, "Hotel K", "Dragočajna", "", 5, 50.0));
-
         };
     }
 

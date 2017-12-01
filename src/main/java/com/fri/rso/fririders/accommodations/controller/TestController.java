@@ -3,7 +3,6 @@ package com.fri.rso.fririders.accommodations.controller;
 import com.fri.rso.fririders.accommodations.config.CustomProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.metrics.buffer.BufferMetricReader;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +24,7 @@ public class TestController {
     String appName;
 
     @Autowired
-    public TestController(RestTemplate restTemplate, ConfigurableEnvironment env, CustomProperties properties, BufferMetricReader bufferMetricReader) {
+    public TestController(RestTemplate restTemplate, ConfigurableEnvironment env, CustomProperties properties) {
         this.restTemplate = restTemplate;
         this.env = env;
         this.properties = properties;
