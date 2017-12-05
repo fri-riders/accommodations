@@ -1,8 +1,14 @@
 ### Cloud instructions
+Public ip : http://169.51.16.54
+
 * bx login -a https://api.eu-de.bluemix.net  
 * bx cs cluster-config rso-fririders
-* SET KUBECONFIG=C:\Users\JanezErzen\.bluemix\plugins\container-service\clusters\rso-fririders\kube-config-par01-rso-fririders.yml
+* SET KUBECONFIG=...
 * kubectl get nodes
 * kubectl proxy 
 
-Public ip : http://169.51.16.54
+Ukazi kubectl:
+* Vsi logi določenega deploymenta: kubectl logs deployment/accommodations-deployment
+* Pridobi seznam podov: kubectl get pods 
+* Vsi logi določenega poda: kubectl logs accommodations-deployment-<deployment_hash>
+

@@ -4,8 +4,6 @@ import com.fri.rso.fririders.accommodations.data.Accommodation;
 import com.fri.rso.fririders.accommodations.data.Booking;
 import com.fri.rso.fririders.accommodations.repository.AccommodationRepository;
 import com.google.common.collect.Lists;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.boot.actuate.metrics.GaugeService;
@@ -42,7 +40,6 @@ public class AccommodationController {
 
     private static final String basePath = "https://jsonplaceholder.typicode.com";
     private static final String bookingsBasePath = "http://localhost:8080/v1/bookings";
-    private Logger log = LogManager.getLogger(AccommodationController.class.getName());
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public List<Accommodation> getByLocation(@PathVariable(value = "id") Long id) {
