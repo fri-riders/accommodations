@@ -6,6 +6,7 @@ Public ip : http://169.51.16.54
 * SET KUBECONFIG=...
 * kubectl get nodes
 * kubectl proxy 
+* kubectl autoscale deployment accommodations-deployment --min=1 --max=10 --cpu-percent=80
 
 Ukazi kubectl:
 * Vsi logi določenega deploymenta: kubectl logs deployment/accommodations-deployment

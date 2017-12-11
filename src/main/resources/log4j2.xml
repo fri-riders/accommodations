@@ -4,9 +4,6 @@
         <Property name="LOG_PATTERN">
             %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%5p} ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex
         </Property>
-        <Property name="LOG_PATTERN_REMOTE">
-            %d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex
-        </Property>
         <Property name="LOGIT_HOST">9641022f-4736-4d45-9073-56ae483beddf-ls.logit.io</Property>
         <Property name="LOGIT_HOST_PORT">17158</Property>
     </Properties>
@@ -15,20 +12,19 @@
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
         <Socket name="socket" host="${LOGIT_HOST}" port="${LOGIT_HOST_PORT}">
-            <!--<JsonLayout properties="false" compact="false"/>-->
-            <PatternLayout pattern="${LOG_PATTERN_REMOTE}"/>
+            <JSONLayout complete="false" compact="true" eventEol="true" charset="UTF-8" properties="true"/>
         </Socket>
     </Appenders>
     <Loggers>
         <Logger name="com.fri.rso.fririders.accommodations.log" level="debug" additivity="false">
-            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Logger name="com.fri.rso.fririders.accommodations.log" level="debug" additivity="false">
-            <AppenderRef ref="socket" />
+            <AppenderRef ref="socket"/>
         </Logger>
         <Root level="info">
-            <AppenderRef ref="ConsoleAppender" />
-            <AppenderRef ref="socket" />
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="socket"/>
         </Root>
     </Loggers>
 </Configuration>

@@ -2,12 +2,16 @@ package com.fri.rso.fririders.accommodations.controller;
 
 import com.fri.rso.fririders.accommodations.data.Accommodation;
 import com.fri.rso.fririders.accommodations.data.Booking;
+import com.fri.rso.fririders.accommodations.data.User;
+import com.fri.rso.fririders.accommodations.feign.clients.NotificationsClient;
+import com.fri.rso.fririders.accommodations.feign.clients.UsersClient;
 import com.fri.rso.fririders.accommodations.repository.AccommodationRepository;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -23,6 +27,13 @@ import java.util.List;
 @RequestMapping(value = "/accommodations")
 public class AccommodationController {
 
+    private final DiscoveryClient discoveryClient;
+
+    @Autowired
+    UsersClient usersClient;
+    @Autowired
+    NotificationsClient notificationsClient;
+
     private final AccommodationRepository repository;
 
     private final RestTemplate restTemplate;
@@ -31,7 +42,8 @@ public class AccommodationController {
     private final GaugeService gaugeService;
 
     @Autowired
-    public AccommodationController(RestTemplateBuilder restTemplateBuilder, AccommodationRepository repository, CounterService counterService, GaugeService gaugeService) {
+    public AccommodationController(DiscoveryClient discoveryClient, RestTemplateBuilder restTemplateBuilder, AccommodationRepository repository, CounterService counterService, GaugeService gaugeService) {
+        this.discoveryClient = discoveryClient;
         this.restTemplate = restTemplateBuilder.build();
         this.repository = repository;
         this.counterService = counterService;
@@ -67,10 +79,10 @@ public class AccommodationController {
                             booking.getFromDate().compareTo(startDate) <= 0 &&
                                     booking.getToDate().compareTo(startDate) >= 0
                     );
-            gaugeService.submit("services.accommodations.availability.error",0);
+            gaugeService.submit("services.accommodations.availability.error", 0);
             return ResponseEntity.ok(isAvailableInterval);
         } catch (RestClientException e) {
-            gaugeService.submit("services.accommodations.availability.error",1);
+            gaugeService.submit("services.accommodations.availability.error", 1);
             return ResponseEntity.badRequest().body("Bookings service unavailable!");
         }
 
@@ -121,11 +133,39 @@ public class AccommodationController {
         } else {
             return ResponseEntity.notFound().build();
         }
-
     }
 
     // Simple fake api call for demo purpuses
     public Accommodation getAccommodations(long id) {
         return this.restTemplate.getForObject(basePath + "/posts/" + id, Accommodation.class);
+    }
+
+    @RequestMapping(value = "users", method = RequestMethod.GET)
+    public ResponseEntity getUsers() {
+        final List<User> users = discoveryClient.getInstances("dev/rsousers").stream()
+                .findFirst()
+                .map(usersInstance -> "http://" + usersInstance.getHost() + ":" + usersInstance.getPort() + "/v1/users/")
+                .map(url -> restTemplate.exchange(url,
+                        HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
+                        }).getBody())
+                .orElse(null);
+        return ResponseEntity.ok(users.get(0));
+    }
+
+    @RequestMapping(value = "users2", method = RequestMethod.GET)
+    public ResponseEntity getUsers2() {
+        User user = restTemplate.getForEntity("http://dev/rsousers/v1/users/db3929ab-3dac-43bf-b150-d4bd48a2c2af",User.class).getBody();
+        return ResponseEntity.ok(user);
+    }
+
+    @RequestMapping(value = "users3", method = RequestMethod.GET)
+    public ResponseEntity<User> getUsers3() {
+        final User user = usersClient.getUsers("db3929ab-3dac-43bf-b150-d4bd48a2c2af").get(0);
+        return ResponseEntity.ok(user);
+    }
+
+    @RequestMapping(value = "notification", method = RequestMethod.GET)
+    public ResponseEntity<String> sendNotification() {
+        return ResponseEntity.ok(notificationsClient.sendNotification("je1468@student.uni-lj.si", "Test-fririders", "Test notification"));
     }
 }

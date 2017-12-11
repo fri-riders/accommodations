@@ -1,16 +1,43 @@
 version: "3"
 services:
   accommodations:
-    build: .
-    ports:
-      - 8081:8081
-    environment:
-      - CONFIG_SERVER_URL=consul
-    depends_on:
-      - consul
+     build: .
+     ports:
+       - 8081:8081
+     environment:
+       - CONFIG_SERVER_URL=consul
+     depends_on:
+       - consul
+  notifications:
+     image: janerz6/notifications:0.1
+     ports:
+       - 8083:8083
+     environment:
+       - CONFIG_SERVER_URL=consul
+     depends_on:
+       - consul
   consul:
     image: consul
     ports:
       - 8400:8400
       - 8500:8500
       - 8600:8600
+  rso-users:
+    image: tomisebjanic/rso-users:0.3
+    ports:
+      - 8082:8082
+    environment:
+      KUMULUZEE_DATASOURCES0_CONNECTIONURL: jdbc:postgresql://postgres:5432/rsouser
+      KUMULUZEE_CONFIG_CONSUL_AGENT: http://consul:8500
+      KUMULUZEE_DISCOVERY_CONSUL_AGENT: http://consul:8500
+    depends_on:
+      - postgres
+      - consul
+  postgres:
+    image: postgres:10.0
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rsouser

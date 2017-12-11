@@ -10,7 +10,7 @@ spec:
         app: accommodations
     spec:
       containers:
-      - image: janerz6/accommodations
+      - image: janerz6/accommodations:0.1
         name: accommodations
         env:
           - name: CONFIG_SERVER_URL
@@ -25,3 +25,24 @@ spec:
         - containerPort: 8081
           name: server
           protocol: TCP
+        resources:
+          requests:
+            cpu: 500m
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: accommodations
+  labels:
+    app: accommodations
+spec:
+  type: NodePort
+  ports:
+  - name: server
+    port: 8081
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: accommodations
