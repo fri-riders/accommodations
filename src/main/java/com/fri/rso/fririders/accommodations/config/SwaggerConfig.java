@@ -19,14 +19,14 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(Predicates.not(RequestHandlerSelectors.basePackage("org.springframework.boot")))
+                .apis(Predicates.and(RequestHandlerSelectors.basePackage("com.fri.rso.fririders.accommodations")))
                 .build()
                 .apiInfo(apiInfo());
     }
     private ApiInfo apiInfo() {
         return new ApiInfo(
                 "Accommodations microservice REST API",
-                "Microservice which provides available accommodations, and enables to mange them.",
+                "Microservice which provides available accommodations, and enables to manage them.",
                 "0.0.1",
                 "Terms of service",
                 new Contact("Janez Eržen","","je1468@student.uni-lj.si"),

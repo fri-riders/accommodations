@@ -10,7 +10,7 @@ spec:
         app: accommodations
     spec:
       containers:
-      - image: janerz6/accommodations:0.1
+      - image: janerz6/accommodations:0.2
         name: accommodations
         env:
           - name: CONFIG_SERVER_URL
@@ -19,7 +19,7 @@ spec:
           httpGet:
             path: /health
             port: server
-          initialDelaySeconds: 20
+          initialDelaySeconds: 40
           periodSeconds: 3
         ports:
         - containerPort: 8081
@@ -27,7 +27,7 @@ spec:
           protocol: TCP
         resources:
           requests:
-            cpu: 500m
+            cpu: 200m
 
 ---
 
