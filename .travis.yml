@@ -14,7 +14,7 @@ cache:
   - $HOME/.m2
 
 env:
-  - IMAGE_NAME=janerz6/accommodations:0.1
+  - IMAGE_NAME=janerz6/accommodations:0.2
 install:
 - mvn clean package -U
 
