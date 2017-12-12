@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/accommodations")
+@RequestMapping(value = "v1/accommodations")
 public class AccommodationController {
 
     private final DiscoveryClient discoveryClient;
@@ -53,6 +53,12 @@ public class AccommodationController {
     private static final String basePath = "https://jsonplaceholder.typicode.com";
     private static final String bookingsBasePath = "http://localhost:8080/v1/bookings";
 
+    @GetMapping
+    public List<Accommodation> getAll() {
+        counterService.increment("meter.services.accommodations.getAll.invoked");
+        return Lists.newArrayList(repository.findAll());
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public List<Accommodation> getByLocation(@PathVariable(value = "id") Long id) {
         return repository.findById(id);
@@ -66,10 +72,7 @@ public class AccommodationController {
             return ResponseEntity.badRequest().build();
         }
         try {
-
-//        final URI consul = discoveryClient.getInstances("bookings").stream()
-//                .findFirst().map(ServiceInstance::getUri)
-//                .orElse(null);
+            // TODO use service discovery instead
             final List<Booking> bookings = restTemplate.exchange(bookingsBasePath,
                     HttpMethod.GET, null, new ParameterizedTypeReference<List<Booking>>() {
                     }).getBody();
@@ -98,11 +101,6 @@ public class AccommodationController {
         return repository.findByCapacity(capacity);
     }
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public List<Accommodation> getAll() {
-        counterService.increment("meter.services.accommodations.getAll.invoked");
-        return Lists.newArrayList(repository.findAll());
-    }
 
     @PostMapping
     @ResponseBody
@@ -154,7 +152,7 @@ public class AccommodationController {
 
     @RequestMapping(value = "users2", method = RequestMethod.GET)
     public ResponseEntity getUsers2() {
-        User user = restTemplate.getForEntity("http://dev/rsousers/v1/users/db3929ab-3dac-43bf-b150-d4bd48a2c2af",User.class).getBody();
+        User user = restTemplate.getForEntity("http://dev/rsousers/v1/users/db3929ab-3dac-43bf-b150-d4bd48a2c2af", User.class).getBody();
         return ResponseEntity.ok(user);
     }
 
@@ -166,6 +164,7 @@ public class AccommodationController {
 
     @RequestMapping(value = "notification", method = RequestMethod.GET)
     public ResponseEntity<String> sendNotification() {
+        // discover service and use it
         return ResponseEntity.ok(notificationsClient.sendNotification("je1468@student.uni-lj.si", "Test-fririders", "Test notification"));
     }
 }
