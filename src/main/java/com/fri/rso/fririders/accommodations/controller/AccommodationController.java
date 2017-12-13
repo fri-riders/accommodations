@@ -181,7 +181,7 @@ public class AccommodationController {
                 "[\"http://169.51.16.54:30735/v1/users\"," +
                 " \"http://169.51.16.54:31558/v1/bookings\"," +
                 " \"http://169.51.16.54:32641/v1/accommodations\"," +
-                " \"http://169.51.16.54:31726/notifications/info\"]," +
+                " \"http://169.51.16.54:31726/swagger-ui.html\"]," +
                 "\"github\": " +
                 "[\"https://github.com/fri-riders/users\"," +
                 " \"https://github.com/fri-riders/accommodations\"," +
