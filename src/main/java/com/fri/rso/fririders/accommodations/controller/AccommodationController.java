@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "v1/accommodations")
@@ -42,7 +43,8 @@ public class AccommodationController {
     private final GaugeService gaugeService;
 
     @Autowired
-    public AccommodationController(DiscoveryClient discoveryClient, RestTemplateBuilder restTemplateBuilder, AccommodationRepository repository, CounterService counterService, GaugeService gaugeService) {
+    public AccommodationController(DiscoveryClient discoveryClient, RestTemplateBuilder restTemplateBuilder, AccommodationRepository repository,
+                                   CounterService counterService, GaugeService gaugeService) {
         this.discoveryClient = discoveryClient;
         this.restTemplate = restTemplateBuilder.build();
         this.repository = repository;
@@ -133,11 +135,6 @@ public class AccommodationController {
         }
     }
 
-    // Simple fake api call for demo purpuses
-    public Accommodation getAccommodations(long id) {
-        return this.restTemplate.getForObject(basePath + "/posts/" + id, Accommodation.class);
-    }
-
     @RequestMapping(value = "users", method = RequestMethod.GET)
     public ResponseEntity getUsers() {
         final List<User> users = discoveryClient.getInstances("dev/rsousers").stream()
@@ -162,9 +159,45 @@ public class AccommodationController {
         return ResponseEntity.ok(user);
     }
 
+    @RequestMapping(value = "users4", method = RequestMethod.GET)
+    public ResponseEntity<String> getUsers4() {
+
+        return ResponseEntity.ok(discoveryClient.getServices().stream().collect(Collectors.joining(",")));
+    }
+
+
     @RequestMapping(value = "notification", method = RequestMethod.GET)
     public ResponseEntity<String> sendNotification() {
         // discover service and use it
         return ResponseEntity.ok(notificationsClient.sendNotification("je1468@student.uni-lj.si", "Test-fririders", "Test notification"));
+    }
+
+    @RequestMapping(value = "info", method = RequestMethod.GET, produces="application/json")
+    public ResponseEntity<String> friRidersInfo() {
+        String data = "{" +
+                "\"clani\": [\"ts4293\", \"ub6189\", \"je1468\"]," +
+                "\"opis_projekta\": \"Nas projekt implementira aplikacijo za oddajo nepremicnin.\"," +
+                "\"mikrostoritve\": " +
+                "[\"http://169.51.16.54:30735/v1/users\"," +
+                " \"http://169.51.16.54:31558/v1/bookings\"," +
+                " \"http://169.51.16.54:32641/v1/accommodations\"," +
+                " \"http://169.51.16.54:31726/notifications/info\"]," +
+                "\"github\": " +
+                "[\"https://github.com/fri-riders/users\"," +
+                " \"https://github.com/fri-riders/accommodations\"," +
+                " \"https://github.com/fri-riders/display-bookings\"," +
+                " \"https://github.com/fri-riders/notifications\"]," +
+                "\"travis\": " +
+                "[\"https://travis-ci.org/fri-riders/users\"," +
+                " \"https://travis-ci.org/fri-riders/accommodations\"," +
+                " \"https://travis-ci.org/fri-riders/display-bookings\"," +
+                " \"https://travis-ci.org/fri-riders/notifications\"]," +
+                "\"dockerhub\":" +
+                " [\"https://hub.docker.com/r/tomisebjanic/rso-users\"," +
+                " \"https://hub.docker.com/r/janerz6/accommodations\"," +
+                " \"https://hub.docker.com/r/urosbajc/display-bookings\"," +
+                " \"https://hub.docker.com/r/janerz6/notifications\"]" +
+                "}";
+        return ResponseEntity.ok(data);
     }
 }
