@@ -5,12 +5,14 @@ import com.fri.rso.fririders.accommodations.data.Booking;
 import com.fri.rso.fririders.accommodations.data.User;
 import com.fri.rso.fririders.accommodations.feign.clients.NotificationsClient;
 import com.fri.rso.fririders.accommodations.feign.clients.UsersClient;
+import com.fri.rso.fririders.accommodations.feign.clients.UsersClient2;
 import com.fri.rso.fririders.accommodations.repository.AccommodationRepository;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -22,7 +24,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "v1/accommodations")
@@ -32,6 +33,10 @@ public class AccommodationController {
 
     @Autowired
     UsersClient usersClient;
+
+    @Autowired
+    UsersClient2 usersClient2;
+
     @Autowired
     NotificationsClient notificationsClient;
 
@@ -137,32 +142,43 @@ public class AccommodationController {
 
     @RequestMapping(value = "users", method = RequestMethod.GET)
     public ResponseEntity getUsers() {
-        final List<User> users = discoveryClient.getInstances("dev/rsousers").stream()
-                .findFirst()
-                .map(usersInstance -> "http://" + usersInstance.getHost() + ":" + usersInstance.getPort() + "/v1/users/")
-                .map(url -> restTemplate.exchange(url,
-                        HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
-                        }).getBody())
-                .orElse(null);
+        final ServiceInstance serviceInstance = discoveryClient.getInstances("dev-rsousers").get(0);
+//        User user = restTemplate.getForEntity("http://localhost:"+ serviceInstance.getPort() +"/v1/users/1f6be5df-3ba9-4e4a-976b-dcd79be95946", User.class).getBody();
+        String host = "localhost";
+        String host2 = "dev-rsousers";
+        String host3 = serviceInstance.getHost();
+        List<User> users = restTemplate.exchange("http://" + host3 + ":" + serviceInstance.getPort() + "/v1/users/",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
+                }).getBody();
         return ResponseEntity.ok(users.get(0));
     }
 
     @RequestMapping(value = "users2", method = RequestMethod.GET)
-    public ResponseEntity getUsers2() {
-        User user = restTemplate.getForEntity("http://dev/rsousers/v1/users/db3929ab-3dac-43bf-b150-d4bd48a2c2af", User.class).getBody();
+    public ResponseEntity<User> getUsers2() {
+        final User user = usersClient.getUsers().get(0);
         return ResponseEntity.ok(user);
     }
 
     @RequestMapping(value = "users3", method = RequestMethod.GET)
     public ResponseEntity<User> getUsers3() {
-        final User user = usersClient.getUsers("db3929ab-3dac-43bf-b150-d4bd48a2c2af").get(0);
+        final User user = usersClient2.getUsers().get(0);
         return ResponseEntity.ok(user);
     }
 
     @RequestMapping(value = "users4", method = RequestMethod.GET)
-    public ResponseEntity<String> getUsers4() {
+    public ResponseEntity<User> getUsers4() {
+        List<User> users = restTemplate.exchange("http://dev-rsousers/v1/users/",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
+                }).getBody();
+        return ResponseEntity.ok(users.get(0));
+    }
 
-        return ResponseEntity.ok(discoveryClient.getServices().stream().collect(Collectors.joining(",")));
+    @RequestMapping(value = "users5", method = RequestMethod.GET)
+    public ResponseEntity<User> getUsers5() {
+        List<User> users = restTemplate.exchange("http://rsousers/v1/users/",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
+                }).getBody();
+        return ResponseEntity.ok(users.get(0));
     }
 
 
