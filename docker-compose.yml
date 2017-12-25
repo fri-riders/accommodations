@@ -22,8 +22,8 @@ services:
       - 8400:8400
       - 8500:8500
       - 8600:8600
-  rso-users:
-    image: tomisebjanic/rso-users:0.3
+  dev-rsousers:
+    image: tomisebjanic/rso-users:0.6.4
     ports:
       - 8082:8082
     environment:
@@ -41,3 +41,21 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: rsouser
+  reporting:
+     image: janerz6/reporting:0.1
+     ports:
+       - 8085:8085
+     environment:
+       - CONFIG_SERVER_URL=consul
+     depends_on:
+       - consul
+#  dev-display-bookings:
+#    image: urosbajc/display-bookings:0.2
+#    ports:
+#      - 8080:8080
+#    environment:
+#      KUMULUZEE_CONFIG_CONSUL_AGENT: http://consul:8500
+#      KUMULUZEE_DISCOVERY_CONSUL_AGENT: http://consul:8500
+#      KUMULUZEE_SERVER_BASEURL: http://display-bookings
+#    depends_on:
+#      - consul
