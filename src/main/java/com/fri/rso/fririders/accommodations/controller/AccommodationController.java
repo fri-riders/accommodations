@@ -3,10 +3,10 @@ package com.fri.rso.fririders.accommodations.controller;
 import com.fri.rso.fririders.accommodations.data.Accommodation;
 import com.fri.rso.fririders.accommodations.data.Booking;
 import com.fri.rso.fririders.accommodations.data.User;
-import com.fri.rso.fririders.accommodations.feign.clients.NotificationsClient;
 import com.fri.rso.fririders.accommodations.feign.clients.UsersClient;
 import com.fri.rso.fririders.accommodations.feign.clients.UsersClient2;
 import com.fri.rso.fririders.accommodations.repository.AccommodationRepository;
+import com.fri.rso.fririders.accommodations.service.AccommodationService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.CounterService;
@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "v1/accommodations")
@@ -37,8 +38,7 @@ public class AccommodationController {
     @Autowired
     UsersClient2 usersClient2;
 
-    @Autowired
-    NotificationsClient notificationsClient;
+    private final AccommodationService accommodationService;
 
     private final AccommodationRepository repository;
 
@@ -49,12 +49,13 @@ public class AccommodationController {
 
     @Autowired
     public AccommodationController(DiscoveryClient discoveryClient, RestTemplateBuilder restTemplateBuilder, AccommodationRepository repository,
-                                   CounterService counterService, GaugeService gaugeService) {
+                                   CounterService counterService, GaugeService gaugeService, AccommodationService accommodationService) {
         this.discoveryClient = discoveryClient;
         this.restTemplate = restTemplateBuilder.build();
         this.repository = repository;
         this.counterService = counterService;
         this.gaugeService = gaugeService;
+        this.accommodationService = accommodationService;
     }
 
     private static final String basePath = "https://jsonplaceholder.typicode.com";
@@ -125,19 +126,10 @@ public class AccommodationController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Accommodation> updateAccommodation(@PathVariable("id") Long id, @ModelAttribute("accommodation") Accommodation acc_update) {
-        Accommodation accommodation = repository.findOne(id);
-        if (accommodation != null) {
-            accommodation.setName(acc_update.getName());
-            accommodation.setCapacity(acc_update.getCapacity());
-            accommodation.setDescription(acc_update.getDescription());
-            accommodation.setLocation(acc_update.getLocation());
-            accommodation.setPricePerDay(acc_update.getPricePerDay());
-
-            repository.save(accommodation);
-            return ResponseEntity.ok().body(accommodation);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Accommodation accommodation = accommodationService.updateAccommodation(id, acc_update);
+        return Optional.of(accommodation)
+                .map(a -> ResponseEntity.ok().body(a))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @RequestMapping(value = "users", method = RequestMethod.GET)
@@ -185,7 +177,13 @@ public class AccommodationController {
     @RequestMapping(value = "notification", method = RequestMethod.GET)
     public ResponseEntity<String> sendNotification() {
         // discover service and use it
-        return ResponseEntity.ok(notificationsClient.sendNotification("je1468@student.uni-lj.si", "Test-fririders", "Test notification"));
+        return ResponseEntity.ok(accommodationService.sendNotification("je1468@student.uni-lj.si"));
+    }
+
+    @RequestMapping(value = "notification-test", method = RequestMethod.GET)
+    public ResponseEntity<String> testNotification() {
+        // discover service and use it
+        return ResponseEntity.ok(accommodationService.testNotification());
     }
 
     @RequestMapping(value = "info", method = RequestMethod.GET, produces="application/json")

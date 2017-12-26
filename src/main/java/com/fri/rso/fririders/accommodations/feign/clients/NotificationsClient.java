@@ -12,4 +12,7 @@ public interface NotificationsClient {
             @RequestParam("recipient") final String recipient,
             @RequestParam("subject") final String subject,
             @RequestParam("message") final String message);
+
+    @RequestMapping(method = RequestMethod.GET, value = "/v1/notifications/test")
+    String notificationTest();
 }
