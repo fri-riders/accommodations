@@ -10,7 +10,7 @@ spec:
         app: accommodations
     spec:
       containers:
-      - image: janerz6/accommodations:0.5
+      - image: janerz6/accommodations:0.6
         name: accommodations
         env:
           - name: CONFIG_SERVER_URL
