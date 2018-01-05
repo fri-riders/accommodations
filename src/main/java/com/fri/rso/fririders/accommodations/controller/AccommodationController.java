@@ -59,7 +59,7 @@ public class AccommodationController {
     }
 
     private static final String basePath = "https://jsonplaceholder.typicode.com";
-    private static final String bookingsBasePath = "http://localhost:8080/v1/bookings";
+    private static final String bookingsBasePath = "http://display-bookings:8080/v1/bookings";
 
     @GetMapping
     public List<Accommodation> getAll() {
@@ -137,9 +137,9 @@ public class AccommodationController {
         final ServiceInstance serviceInstance = discoveryClient.getInstances("dev-rsousers").get(0);
 //        User user = restTemplate.getForEntity("http://localhost:"+ serviceInstance.getPort() +"/v1/users/1f6be5df-3ba9-4e4a-976b-dcd79be95946", User.class).getBody();
         String host = "localhost";
-        String host2 = "dev-rsousers";
+        String host2 = "rsousers";
         String host3 = serviceInstance.getHost();
-        List<User> users = restTemplate.exchange("http://" + host3 + ":" + serviceInstance.getPort() + "/v1/users/",
+        List<User> users = restTemplate.exchange("http://" + host2 + ":" + serviceInstance.getPort() + "/v1/users/",
                 HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
                 }).getBody();
         return ResponseEntity.ok(users.get(0));
@@ -173,6 +173,21 @@ public class AccommodationController {
         return ResponseEntity.ok(users.get(0));
     }
 
+    @RequestMapping(value = "users6", method = RequestMethod.GET)
+    public ResponseEntity<User> getUsers6() {
+        List<User> users = restTemplate.exchange("http://rsousers:8082/v1/users/",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
+                }).getBody();
+        return ResponseEntity.ok(users.get(0));
+    }
+
+    @RequestMapping(value = "users7", method = RequestMethod.GET)
+    public ResponseEntity<User> getUsers7() {
+        List<User> users = restTemplate.exchange("http://dev-rsousers:8082/v1/users/",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
+                }).getBody();
+        return ResponseEntity.ok(users.get(0));
+    }
 
     @RequestMapping(value = "notification", method = RequestMethod.GET)
     public ResponseEntity<String> sendNotification() {
