@@ -36,11 +36,11 @@ public class AccommodationService {
     @HystrixCommand(fallbackMethod = "sendNotificationFallback", commandProperties = {
             //@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "60000"),
             // when circuit is opened wait for 60s then start excepting requests
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000"),
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
             @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5")
     })
-    public String sendNotification(String recipient) {
-        return notificationsClient.sendNotification(recipient, "Test-fririders", "Test notification");
+    public String sendNotification(String recipient, String title, String msg) {
+        return notificationsClient.sendNotification(recipient, title, msg);
     }
 
     @HystrixCommand(fallbackMethod = "sendNotificationFallback2", commandProperties = {
@@ -50,7 +50,7 @@ public class AccommodationService {
         return notificationsClient.notificationTest();
     }
 
-    public String sendNotificationFallback(String recipient) {
+    public String sendNotificationFallback(String recipient, String title, String msg) {
         return "Notifications service is currently not available.";
     }
 

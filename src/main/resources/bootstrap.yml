@@ -10,11 +10,20 @@ spring:
       host: ${CONFIG_SERVER_URL:localhost}
       discovery:
         hostname: ${DISCOVERY_HOSTNAME:localhost}
+      config:
+        watch:
+          delay: 1000
   profiles:
     active: ${SPR_PROFILE:dev}
 app:
   name: Accommodation server
   healthy: true
+  localhost: ${LOCALHOST:true}
+  message:
+    notify:
+      user:
+        accommodation:
+          changed: Test notifications
 
 management:
   security:
@@ -51,4 +60,4 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 4000
+            timeoutInMilliseconds: 10000

@@ -5,6 +5,7 @@ services:
      ports:
        - 8081:8081
      environment:
+       - LOCALHOST=false
        - CONFIG_SERVER_URL=consul
      depends_on:
        - consul
@@ -22,7 +23,7 @@ services:
       - 8400:8400
       - 8500:8500
       - 8600:8600
-  dev-rsousers:
+  rsousers:
     image: tomisebjanic/rso-users:0.6.4
     ports:
       - 8082:8082
@@ -49,13 +50,15 @@ services:
        - CONFIG_SERVER_URL=consul
      depends_on:
        - consul
-#  dev-display-bookings:
-#    image: urosbajc/display-bookings:0.2
-#    ports:
-#      - 8080:8080
-#    environment:
-#      KUMULUZEE_CONFIG_CONSUL_AGENT: http://consul:8500
-#      KUMULUZEE_DISCOVERY_CONSUL_AGENT: http://consul:8500
-#      KUMULUZEE_SERVER_BASEURL: http://display-bookings
-#    depends_on:
-#      - consul
+  bookings:
+    image: urosbajc/display-bookings:0.3
+    ports:
+      - 8087:8080
+    environment:
+      KUMULUZEE_CONFIG_ETCD_HOSTS: http://etcd:2379
+      KUMULUZEE_DISCOVERY_ETCD_HOSTS: http://etcd:2379
+      KUMULUZEE_SERVER_BASEURL: http://bookings:8087
+    depends_on:
+      - etcd
+      - auth
+      - messaging

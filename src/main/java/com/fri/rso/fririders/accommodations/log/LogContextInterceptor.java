@@ -51,6 +51,7 @@ public class LogContextInterceptor extends HandlerInterceptorAdapter{
         CloseableThreadContext.put("appName", applicationContext.getId().split(":")[0]);
         CloseableThreadContext.put("env", applicationContext.getId().split(":")[1]);
         CloseableThreadContext.put("version", applicationContext.getEnvironment().getProperty("app.version"));
+        CloseableThreadContext.put("uri", request.getRequestURI());
         logger.debug("requestId {}, host {}  HttpMethod: {}, URI : {}", requestId, request.getHeader("host"),
                 request.getMethod(), request.getRequestURI());
     }

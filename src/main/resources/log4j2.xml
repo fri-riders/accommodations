@@ -4,8 +4,8 @@
         <Property name="LOG_PATTERN">
             %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%5p} ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex
         </Property>
-        <Property name="LOGIT_HOST">9641022f-4736-4d45-9073-56ae483beddf-ls.logit.io</Property>
-        <Property name="LOGIT_HOST_PORT">17158</Property>
+        <Property name="LOGIT_HOST">589d1c23-5c27-4bb3-b458-d42249199af3-ls.logit.io</Property>
+        <Property name="LOGIT_HOST_PORT">14610</Property>
     </Properties>
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
