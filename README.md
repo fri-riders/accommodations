@@ -41,6 +41,7 @@ When user updates accommodation the accommodation owner is notified that it has 
         }
     * All updates of accommodation with id 1: 
         contextMap.uri :"v1/accommodations/1"
+        contextMap.appName:accommodations
         
 ## Other
 ### Cloud instructions
