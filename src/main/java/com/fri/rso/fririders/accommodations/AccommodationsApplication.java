@@ -38,7 +38,11 @@ public class AccommodationsApplication {
             repository.save(new Accommodation(1L, "Hotel Slon", "Ljubljana", "", 4, 120.0));
             repository.save(new Accommodation(2L, "Motel Medno", "Medno", "", 5, 40.0));
             repository.save(new Accommodation(3L, "Hotel Kanu", "Dragočajna", "", 2, 50.0));
-            repository.save(new Accommodation(4L, "Hotel K", "Dragočajna", "", 5, 50.0));
+            repository.save(new Accommodation(4L, "Hotel Emonec", "Ljubljana", "", 5, 80.0));
+            repository.save(new Accommodation(5L, "Tobacna Red", "Ljubljana", "", 4, 60.0));
+            repository.save(new Accommodation(6L, "Hotel Tabor", "Maribor", "", 2, 35.0));
+            repository.save(new Accommodation(7L, "Arena Welness hotel", "Maribor", "", 5, 45.0));
+            repository.save(new Accommodation(8L, "Grand Hotel Union", "Ljubljana", "", 2, 80.0));
         };
     }
 
