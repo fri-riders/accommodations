@@ -1,20 +1,4 @@
-### Cloud instructions
-Public ip : http://169.51.16.54
-
-* bx login -a https://api.eu-de.bluemix.net  
-* bx cs cluster-config rso-fririders
-* SET KUBECONFIG=...
-* kubectl get nodes
-* kubectl proxy 
-* kubectl autoscale deployment accommodations-deployment --min=1 --max=10 --cpu-percent=80
-* kubectl set image deployments/accommodations-deployment accommodations=janerz6/accomodations:0.2
-
-## Kubectl controls:
-* All logs of specific deployment: kubectl logs deployment/accommodations-deployment
-* List pods: kubectl get pods 
-* Get all logs of specific pod: kubectl logs accommodations-deployment-<deployment_hash>
-
-Kubernetes IP (should change): http://169.51.16.54:32641/v1/accommodations/
+# Accommodations microservice
 
 ## Endpoints
 * Swagger `GET /swagger-ui.html`
@@ -25,9 +9,7 @@ Kubernetes IP (should change): http://169.51.16.54:32641/v1/accommodations/
 * Restart app: `POST /test/restart`
 * Simulate heavy traffic: `GET /test/fibonnacci/{n}`
 * ...
-
-### Accommodations
-
+## Examples
 ### Configuration test 
 
 #### Change notification message
@@ -59,7 +41,25 @@ When user updates accommodation the accommodation owner is notified that it has 
         }
     * All updates of accommodation with id 1: 
         contextMap.uri :"v1/accommodations/1"
+        
+## Other
+### Cloud instructions
+Public ip : http://169.51.16.54
 
+* bx login -a https://api.eu-de.bluemix.net  
+* bx cs cluster-config rso-fririders
+* SET KUBECONFIG=...
+* kubectl get nodes
+* kubectl proxy 
+* kubectl autoscale deployment accommodations-deployment --min=1 --max=10 --cpu-percent=80
+* kubectl set image deployments/accommodations-deployment accommodations=janerz6/accomodations:0.2
+
+### Kubectl controls:
+* All logs of specific deployment: kubectl logs deployment/accommodations-deployment
+* List pods: kubectl get pods 
+* Get all logs of specific pod: kubectl logs accommodations-deployment-<deployment_hash>
+
+Kubernetes IP (should change): http://169.51.16.54:32641/v1/accommodations/
 
 
 
