@@ -1,5 +1,6 @@
 package com.fri.rso.fririders.accommodations.controller;
 
+import com.fri.rso.fririders.accommodations.config.CustomProperties;
 import com.fri.rso.fririders.accommodations.data.Accommodation;
 import com.fri.rso.fririders.accommodations.data.Booking;
 import com.fri.rso.fririders.accommodations.data.User;
@@ -7,11 +8,11 @@ import com.fri.rso.fririders.accommodations.repository.AccommodationRepository;
 import com.fri.rso.fririders.accommodations.service.AccommodationService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -26,14 +27,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@RefreshScope
 @RestController
 @RequestMapping(value = "v1/accommodations")
 public class AccommodationController {
 
-    private final DiscoveryClient discoveryClient;
-
-    @Value("${app.localhost}")
-    private boolean isLocalhost;
+    private CustomProperties properties;
 
     @Autowired
     private final Environment environment;
@@ -48,9 +47,8 @@ public class AccommodationController {
     private final GaugeService gaugeService;
 
     @Autowired
-    public AccommodationController(DiscoveryClient discoveryClient, Environment environment, RestTemplateBuilder restTemplateBuilder, AccommodationRepository repository,
+    public AccommodationController(Environment environment, RestTemplateBuilder restTemplateBuilder, AccommodationRepository repository,
                                    CounterService counterService, GaugeService gaugeService, AccommodationService accommodationService) {
-        this.discoveryClient = discoveryClient;
         this.environment = environment;
         this.restTemplate = restTemplateBuilder.build();
         this.repository = repository;
@@ -72,7 +70,7 @@ public class AccommodationController {
 
     @RequestMapping(value = "/{id}/availability", method = RequestMethod.GET)
     public ResponseEntity getAvailability(@PathVariable(value = "id") Long id, @RequestParam long fromTime, @RequestParam long toTime) {
-        String host = isLocalhost ? "localhost" : "bookings";
+        String host = properties.isLocalhost() ? "localhost" : "bookings";
         final Date startDate = new Date(fromTime);
         final Date endDate = new Date(toTime);
         if (startDate.compareTo(endDate) >= 0) {
@@ -98,7 +96,7 @@ public class AccommodationController {
 
     @RequestMapping(value = "/{id}/bookings", method = RequestMethod.GET)
     public ResponseEntity getForBooking(@PathVariable(value = "id") Long id) {
-        String host = isLocalhost ? "localhost" : "bookings";
+        String host = properties.isLocalhost() ? "localhost" : "bookings";
         final List<Booking> bookings = restTemplate.exchange("http://" + host + ":8080/v1/bookings",
                 HttpMethod.GET, null, new ParameterizedTypeReference<List<Booking>>() {
                 }).getBody();
@@ -151,7 +149,7 @@ public class AccommodationController {
 
     @RequestMapping(value = "users", method = RequestMethod.GET)
     public ResponseEntity getUsers() {
-        String host = isLocalhost ? "localhost" : "users";
+        String host = properties.isLocalhost() ? "localhost" : "users";
         List<User> users = restTemplate.exchange("http://"+ host +":8082/v1/users/",
                 HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
                 }).getBody();

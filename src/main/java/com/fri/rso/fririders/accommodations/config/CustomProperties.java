@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class CustomProperties {
     private String name;
     private Boolean healthy;
+    private boolean localhost;
 
     public String getName() {
         return name;
@@ -25,5 +26,13 @@ public class CustomProperties {
 
     public void setHealthy(Boolean healthy) {
         this.healthy = healthy;
+    }
+
+    public boolean isLocalhost() {
+        return localhost;
+    }
+
+    public void setLocalhost(boolean localhost) {
+        this.localhost = localhost;
     }
 }
