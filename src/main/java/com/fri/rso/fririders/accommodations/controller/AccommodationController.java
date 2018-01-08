@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "v1/accommodations")
 public class AccommodationController {
 
+    @Autowired
     private CustomProperties properties;
 
     @Autowired
