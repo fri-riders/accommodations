@@ -77,8 +77,9 @@ public class AccommodationController {
         if (startDate.compareTo(endDate) >= 0) {
             return ResponseEntity.badRequest().build();
         }
+        final long requestStartTime = System.currentTimeMillis();
         try {
-            long startTime = System.currentTimeMillis();
+
             final List<Booking> bookings = restTemplate.exchange("http://" + host + ":8080/v1/bookings",
                     HttpMethod.GET, null, new ParameterizedTypeReference<List<Booking>>() {
                     }).getBody();
@@ -87,12 +88,12 @@ public class AccommodationController {
                     .allMatch(booking -> //date ranges does not overlap
                             endDate.before(booking.getFromDate()) || startDate.after(booking.getToDate())
                     );
-            long endTime = System.currentTimeMillis();
-            gaugeService.submit("services.accommodations.availability.external.request.length", endTime - startTime);
+            gaugeService.submit("services.accommodations.availability.external.request.length", ((double)(System.currentTimeMillis() - requestStartTime)) / 1000);
             gaugeService.submit("services.accommodations.availability.error", 0.);
             return ResponseEntity.ok(isAvailableInterval);
         } catch (RestClientException e) {
             gaugeService.submit("services.accommodations.availability.error", 1.);
+            gaugeService.submit("services.accommodations.availability.external.request.length", ((double)System.currentTimeMillis() - requestStartTime) / 1000);
             return ResponseEntity.badRequest().body("Bookings service unavailable!");
         }
     }
